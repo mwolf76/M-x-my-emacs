@@ -1,0 +1,32 @@
+# OS X
+.DS_Store
+
+# python
+*.py[co]
+
+# pycharm
+/.idea
+
+# virtualenv
+/.ve
+
+# compass
+/moka/main/static/css/.sass-cache
+/moka/main/static/css/stylesheets/*.css
+/moka/main/static/images/icons/contenttypes-*.png
+/moka/main/static/images/icons/contenttypesmall-*.png
+/moka/main/static/images/icons/social-*.png
+
+# whoosh
+/moka/whoosh/*
+
+# our app
+/moka/*.sqlite*
+/moka/settings_local.py
+
+# uploaded files and cache
+/moka/media/avatar/*
+/moka/media/cache/*
+
+# django-jenkins
+reports/

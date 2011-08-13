@@ -5,6 +5,7 @@
 ;; ===== Setup load path =====
 (add-to-list 'load-path "~/.emacs.d/plugins/")
 (add-to-list 'load-path "~/.emacs.d/plugins/pony-mode/")
+(add-to-list 'load-path "~/.emacs.d/plugins/git-emacs/")
 
 ;; Auto elisp compilation cache upon startup
 (require 'byte-code-cache)
@@ -38,6 +39,10 @@
  '(my-tab-face            ((((class color)) (:background "grey10"))) t)
  '(my-trailing-space-face ((((class color)) (:background "gray10"))) t)
  '(my-long-line-face ((((class color)) (:background "gray10"))) t))
+
+;; ==================== Git setup ====================
+;; (setq git-state-modeline-decoration 'git-state-decoration-large-dot)
+(require 'git-emacs)
 
 ;; ==================== Backup setup ====================
 ;; Disable backup files.
