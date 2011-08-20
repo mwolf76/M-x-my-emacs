@@ -9,7 +9,7 @@ http://www.emacswiki.org/emacs/PythonMode
 I'd credit the author, if I knew who they were.
 
 Here's how to use it in Emacs:
-(setq pycodechecker "pylint_etc_wrapper.py")
+(setq pycodechecker "codechecker.py")
 (when (load "flymake" t)
   (load-library "flymake-cursor")
   (defun dss/flymake-pycodecheck-init ()
@@ -43,10 +43,7 @@ And here are two little helpers for quickly silencing a warning message:
                (insert ","))
         (insert "pylint: disable-msg="))
     (insert msgid)))
-
 """
-# ' extra apostrophe to fix Emacs python-mode broken string matching
-
 # Copyright (c) 2002-present, Damn Simple Solutions Ltd.
 # All rights reserved.
 #
@@ -78,6 +75,7 @@ And here are two little helpers for quickly silencing a warning message:
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import re
+import sys
 from optparse import OptionParser
 from subprocess import Popen, PIPE
 
@@ -321,4 +319,14 @@ def main():
         runner.run(filenames)
 
 if __name__ == '__main__':
-    main()
+    try:
+      main()
+
+    except Exception, e:
+      logfile = open ('/Users/markus/.emacs.d/flymake.log', 'at')
+      logfile.write('Caugh exception: %s. Command line was %s (%d args)\n' % (
+        str(e), " ".join(sys.argv), len(sys.argv))
+      )
+      logfile.close()
+
+      raise e
