@@ -7,9 +7,9 @@
 (add-to-list 'load-path "~/.emacs.d/plugins/pony-mode/")
 (add-to-list 'load-path "~/.emacs.d/plugins/git-emacs/")
 
-;; Auto elisp compilation cache upon startup
-(require 'byte-code-cache)
-(load-library "byte-code-cache")
+;; ;; Auto elisp compilation cache upon startup
+;; (require 'byte-code-cache)
+;;(load-library "byte-code-cache")
 
 ;; ===== Color theme setup =====
 (color-theme-initialize)
@@ -79,7 +79,8 @@
   "-%-"))
 
 ;; Show line-number in the mode line (not in every mode)
-(line-number-mode 1)
+;; (line-number-mode 1)
+(linum-mode 1)
 (require 'linum-off)
 
 ;; Show column-number in the mode line
@@ -92,10 +93,8 @@
 ;; Enable compressed files I/O
 (auto-compression-mode t)
 
-;; Set the highlight current line minor mode
-;; In every buffer, the line which contains the cursor will be fully
-;; highlighted
-;; (global-hl-line-mode 1)
+;; Set a shortcut to enable/disable hl-line-mode
+(global-set-key "\C-ch" 'hl-line-mode)
 
 (load-library "match")
 (global-set-key "\C-c)" `goto-match-paren)
@@ -183,7 +182,7 @@
 ;; (define-key comint-mode-map [(control meta p)]
 ;;   'comint-previous-input)
 
-===== Shell and sudo'ed find-file =====
+;; ===== Shell and sudo'ed find-file =====
 (defvar find-file-root-prefix (if (featurep 'xemacs) "/[sudo/root@localhost]" "/sudo:root@localhost:" )
   "*The filename prefix used to open a file with `find-file-root'.")
 
@@ -232,6 +231,7 @@
 (add-to-list 'auto-mode-alist '("\\.json$" . js2-mode))
 
 ;; ===== Python =====
+(require 'python-mode)
 (require 'ipython)
 (setq ipython-command
       "/Users/markus/Documents/work/ahref/git/moka/moka/bin/ipython"
@@ -279,13 +279,13 @@
 (add-hook 'python-mode-hook
           (lambda () (flymake-mode t)))
 
-;; (autoload 'python-pep8 "python-pep8")
-;; (autoload 'pep8 "python-pep8")
-;; (global-set-key (kbd "<f5>") 'python-pep8)
+(autoload 'python-pep8 "python-pep8")
+(autoload 'pep8 "python-pep8")
+(global-set-key (kbd "<f5>") 'python-pep8)
 
-;; (autoload 'python-pylint "python-pylint")
-;; (autoload 'pylint "python-pylint")
-;; (global-set-key (kbd "M-<f5>") 'python-pylint)
+(autoload 'python-pylint "python-pylint")
+(autoload 'pylint "python-pylint")
+(global-set-key (kbd "M-<f5>") 'python-pylint)
 
 ;; For Django
 ;; TODO: pony mode env enhancements
@@ -366,6 +366,8 @@ argument."
 ;; (global-set-key "\C-cm" 'postack-push)
 ;; (global-set-key "\C-cp" 'postack-pop)
 
+(fset 'brk "import pdb; pdb.set_trace()  # FIXME[MP] breakpoint")
+
 ;; TODO: move these ones somewhere else
 ;; ===== Project-dependeant macros =====
 (fset 'moka "~/Documents/work/ahref/git/moka/")
@@ -401,7 +403,7 @@ argument."
               (which-function-mode t))))
 
 ;; spell check only strings/comments when in Python mode:
-   (add-hook 'python-mode-hook 'flyspell-prog-mode)
+(add-hook 'python-mode-hook 'flyspell-prog-mode)
 
 ;; Get rid of annoying question
 (setq kill-buffer-query-functions
