@@ -78,11 +78,6 @@
   (global-mode-string ("--" global-mode-string))
   "-%-"))
 
-;; Show line-number in the mode line (not in every mode)
-;; (line-number-mode 1)
-(linum-mode 1)
-(require 'linum-off)
-
 ;; Show column-number in the mode line
 (column-number-mode 1)
 
@@ -95,6 +90,10 @@
 
 ;; Set a shortcut to enable/disable hl-line-mode
 (global-set-key "\C-ch" 'hl-line-mode)
+
+;; Set a shortcut to enable/disable hl-line-mode
+(global-set-key "\C-ch" 'hl-line-mode)
+(global-set-key "\C-cl" 'linum-mode)
 
 (load-library "match")
 (global-set-key "\C-c)" `goto-match-paren)
