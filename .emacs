@@ -236,13 +236,18 @@
       "/Users/markus/Documents/work/ahref/git/moka/moka/bin/ipython"
 )
 
+;; IPython 0.10 (current)
 (setq ipython-completion-command-string
-      "print(';'.join(get_ipython().Completer.complete('%s')[1])) #PYTHON-MODE SILENT\n"
+      "print(';'.join(__IP__.Completer.complete('%s')[1])) #PYTHON-MODE SILENT\n"
 )
 
+;; ;; Reauires IPython 0.11
+;; (setq ipython-completion-command-string
+;;       "print(';'.join(get_ipython().Completer.complete('%s')[1])) #PYTHON-MODE SILENT\n"
+;; )
+
 ;; Python checkers
-(require `tramp)
-(setq pycodechecker "~/.emacs.d/tools/pylint_etc_wrapper.py")
+(setq pycodechecker "~/.emacs.d/tools/codechecker.py")
 (when (load "flymake" t)
   (load-library "flymake-cursor")
   (defun dss/flymake-pycodecheck-init ()

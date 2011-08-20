@@ -44,6 +44,7 @@ And here are two little helpers for quickly silencing a warning message:
         (insert "pylint: disable-msg="))
     (insert msgid)))
 """
+# '
 # Copyright (c) 2002-present, Damn Simple Solutions Ltd.
 # All rights reserved.
 #
@@ -74,8 +75,9 @@ And here are two little helpers for quickly silencing a warning message:
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import re
 import sys
+import os
+import re
 from optparse import OptionParser
 from subprocess import Popen, PIPE
 
@@ -100,12 +102,14 @@ class LintRunner(object):
     def __init__(self, ignore_codes=(),
                  use_sane_defaults=True,
                  output_format=None,
-                 debug=False):
+                 debug=False,
+                 add_local_path=False):
         self.ignore_codes = set(ignore_codes)
         self.use_sane_defaults = use_sane_defaults
         if output_format:
             self.output_format = output_format
         self._debug = debug
+        self._add_local_path =add_local_path
 
     @property
     def operative_ignore_codes(self):
@@ -136,12 +140,21 @@ class LintRunner(object):
         print self.output_format % fixed_data
 
     def run(self, filenames):
+        env = os.environ
+        if self._add_local_path:
+          python_path = env.get('PYTHONPATH', "")
+          if not python_path.endswith(':'):
+            python_path += ':'
+          python_path += ":".join(
+            map(os.path.dirname, filenames))
+          env['PYTHONPATH']=python_path
+
         args = [self.command]
         args.extend(self.run_flags)
         args.extend(filenames)
         if self._debug:
             print "DEBUG: command = ", ' '.join(args)
-        process = Popen(args, stdout=PIPE, stderr=PIPE, env=self.env)
+        process = Popen(args, stdout=PIPE, stderr=PIPE, env=env)
         for line in process.stdout:
             if self._debug:
                 print self.command, 'STDOUT:', line
@@ -162,7 +175,7 @@ class PylintRunner(LintRunner):
         #r'\s*(?P<context>[^\]]+)\]'
         r'\s*(?P<description>.*)$')
 
-    command = 'pylint'
+    command = '/Users/markus/Documents/work/ahref/git/moka/moka/bin/pylint'
     sane_default_ignore_codes = set([
         "C0103"  # Naming convention
         , "W0108"  # Lambda may not be necessary
@@ -210,7 +223,7 @@ class PylintRunner(LintRunner):
 
 
 class Pep8Runner(LintRunner):
-    command = 'pep8.py'
+    command = '/Users/markus/Documents/work/ahref/git/moka/moka/bin/pep8'
     sane_default_ignore_codes = set([
         #'RW29', 'W391', 'W291', 'WO232', #
         #'E202', # E202 whitespace before ']' or ')'
@@ -247,7 +260,7 @@ class Pep8Runner(LintRunner):
 
 
 class PyflakesRunner(LintRunner):
-    command = 'pyflakes'
+    command = '/Users/markus/Documents/work/ahref/git/moka/moka/bin/pyflakes'
     output_matcher = re.compile(
         r'(?P<filename>[^:]+):'
         r'(?P<line_number>[^:]+)\s*:'
@@ -270,10 +283,10 @@ class PyflakesRunner(LintRunner):
 
 ################################################################################
 checkers = {
-    "pylint":PylintRunner
-    , "pep8":Pep8Runner
-    , "pyflakes":PyflakesRunner
-    }
+  "pylint":PylintRunner,
+  "pep8":Pep8Runner,
+  "pyflakes":PyflakesRunner,
+}
 ################################################################################
 
 def main():
@@ -315,18 +328,9 @@ def main():
         runner = RunnerClass(
             output_format=output_format,
             ignore_codes=ignore_codes,
-            debug=options.debug)
+            debug=options.debug,
+            add_local_path=True)
         runner.run(filenames)
 
 if __name__ == '__main__':
-    try:
-      main()
-
-    except Exception, e:
-      logfile = open ('/Users/markus/.emacs.d/flymake.log', 'at')
-      logfile.write('Caugh exception: %s. Command line was %s (%d args)\n' % (
-        str(e), " ".join(sys.argv), len(sys.argv))
-      )
-      logfile.close()
-
-      raise e
+  main()
