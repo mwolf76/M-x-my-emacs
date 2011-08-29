@@ -6,10 +6,11 @@
 (add-to-list 'load-path "~/.emacs.d/plugins/")
 (add-to-list 'load-path "~/.emacs.d/plugins/pony-mode/")
 (add-to-list 'load-path "~/.emacs.d/plugins/git-emacs/")
+(add-to-list 'load-path "~/.emacs.d/plugins/scala-mode")
 
 ;; ;; Auto elisp compilation cache upon startup
-;; (require 'byte-code-cache)
-;;(load-library "byte-code-cache")
+(require 'byte-code-cache)
+(load-library "byte-code-cache")
 
 ;; ===== Color theme setup =====
 (color-theme-initialize)
@@ -33,7 +34,7 @@
 
 ;; 80 columns
 (require 'whitespace)
-(global-whitespace-mode t)
+;; (global-whitespace-mode t)
 (setq whitespace-style '(face empty tabs lines-tail trailing))
 (custom-set-faces
  '(my-tab-face            ((((class color)) (:background "grey10"))) t)
@@ -291,10 +292,12 @@
 (autoload 'pylint "python-pylint")
 (global-set-key (kbd "M-<f5>") 'python-pylint)
 
-;; For Django
-;; TODO: pony mode env enhancements
-(setq project-root "~/Documents/work/django/cms/")
+;; ==================== Django development ==============================
 (require 'pony-mode)
+
+(load "~/.emacs.d/plugins/nxhtml/autostart.el")
+(setq mumamo-background-colors nil)
+(add-to-list 'auto-mode-alist '("\\.html$" . django-nxhtml-mumamo-mode))
 
 ;;; cperl-mode customizations
 (add-hook 'cperl-mode-hook
@@ -317,42 +320,54 @@
 (global-set-key [(meta g)]
                 'goto-line)
 
+;; ==================== Scala development ====================
+(require 'scala-mode-auto)
+;; (add-hook 'scala-mode-hook
+;;           '(lambda ()
+;;              (yas/minor-mode-on)
+;;              ))
 
-;; ==================== Applications ====================
+;; ==================== Slime (Lisp interaction) ====================
+(add-to-list 'load-path "~/.emacs.d/plugins/slime/")  ; your SLIME directory
+(setq inferior-lisp-program "/opt/local/bin/sbcl") ; your Lisp system
+(require 'slime)
+(slime-setup)
 
-;; ===== Emacs IRC client (erc) =====
-(require 'erc)
-(require 'erc-track)
-(require 'erc-fill)
-(require 'erc-log)
-;; See http://www.emacswiki.org/cgi-bin/wiki/ErcStartupFiles
-(defmacro ahref-erc-connect (command server port nick)
-  "Create interactive command `command', for connecting to an IRC
-server.  The command uses interactive mode if passed an
-argument."
-  (fset command
-        `(lambda (arg)
-           (interactive "p")
-           (if (not (= 1 arg))
-               (call-interactively 'erc-select)
-             (erc-select :server ,server :port ,port :nick ,nick)))))
-; (de-erc-connect erc-ag2 "irc.freenode.net" 6667 "mwolf76")
-; (defun erc-cadence ()
-;   "Fire up ERC"
-;   (interactive)
-;   (select-frame (make-frame '((name . "Emacs ERC") (minibuffer . t))))
-;   (call-interactively 'erc-ag2))
-(add-hook 'erc-mode-hook
-          '(lambda ()
-             (pcomplete-erc-setup)
-             (erc-completion-mode 1)))
-(erc-track-mode t)
-(erc-fill-mode t)
-(setq erc-log-insert-log-on-open nil)
-(setq erc-log-channels t)
-(setq erc-log-channels-directory "~/.emacs.d/erc/")
-(setq erc-save-buffer-on-part t)
-(setq erc-hide-timestamps nil)
+;; ;; ==================== Applications ====================
+
+;; ;; ===== Emacs IRC client (erc) =====
+;; (require 'erc)
+;; (require 'erc-track)
+;; (require 'erc-fill)
+;; (require 'erc-log)
+;; ;; See http://www.emacswiki.org/cgi-bin/wiki/ErcStartupFiles
+;; (defmacro ahref-erc-connect (command server port nick)
+;;   "Create interactive command `command', for connecting to an IRC
+;; server.  The command uses interactive mode if passed an
+;; argument."
+;;   (fset command
+;;         `(lambda (arg)
+;;            (interactive "p")
+;;            (if (not (= 1 arg))
+;;                (call-interactively 'erc-select)
+;;              (erc-select :server ,server :port ,port :nick ,nick)))))
+;; ; (de-erc-connect erc-ag2 "irc.freenode.net" 6667 "mwolf76")
+;; ; (defun erc-cadence ()
+;; ;   "Fire up ERC"
+;; ;   (interactive)
+;; ;   (select-frame (make-frame '((name . "Emacs ERC") (minibuffer . t))))
+;; ;   (call-interactively 'erc-ag2))
+;; (add-hook 'erc-mode-hook
+;;           '(lambda ()
+;;              (pcomplete-erc-setup)
+;;              (erc-completion-mode 1)))
+;; (erc-track-mode t)
+;; (erc-fill-mode t)
+;; (setq erc-log-insert-log-on-open nil)
+;; (setq erc-log-channels t)
+;; (setq erc-log-channels-directory "~/.emacs.d/erc/")
+;; (setq erc-save-buffer-on-part t)
+;; (setq erc-hide-timestamps nil)
 
 (defadvice save-buffers-kill-emacs (before save-logs (arg) activate)
   (save-some-buffers t (lambda () (when
@@ -369,8 +384,6 @@ argument."
 ;; (load-library "postack")
 ;; (global-set-key "\C-cm" 'postack-push)
 ;; (global-set-key "\C-cp" 'postack-pop)
-
-(fset 'brk "import pdb; pdb.set_trace()  # FIXME[MP] breakpoint")
 
 ;; TODO: move these ones somewhere else
 ;; ===== Project-dependeant macros =====
@@ -429,3 +442,13 @@ argument."
 (dotfile .bashrc)
 (dotfile .bash_aliases)
 (dotfile .bash_environment)
+
+;; ==================== Aquamacs specific stuff ====================
+(if (featurep 'aquamacs)
+    (progn
+      (define-key dired-mode-map "o" 'dired-open-mac)
+      (defun dired-open-mac ()
+        (interactive)
+        (let ((file-name (dired-get-file-for-visit)))
+          (if (file-exists-p file-name)
+              (shell-command (concat "open '" file-name "'" nil )))))))
