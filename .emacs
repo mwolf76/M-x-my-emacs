@@ -8,9 +8,12 @@
 (add-to-list 'load-path "~/.emacs.d/plugins/git-emacs/")
 (add-to-list 'load-path "~/.emacs.d/plugins/scala-mode")
 
-;; ;; Auto elisp compilation cache upon startup
+;; Auto elisp compilation cache upon startup
 (require 'byte-code-cache)
 (load-library "byte-code-cache")
+
+;; Remove useless toolbar
+(tool-bar-mode -1)
 
 ;; ===== Color theme setup =====
 (color-theme-initialize)
@@ -82,15 +85,9 @@
 ;; Show column-number in the mode line
 (column-number-mode 1)
 
-;; Display time
-(display-time-mode 1)
-
 ;; ===== Misc stuff setup =====
 ;; Enable compressed files I/O
 (auto-compression-mode t)
-
-;; Set a shortcut to enable/disable hl-line-mode
-(global-set-key "\C-ch" 'hl-line-mode)
 
 ;; Set a shortcut to enable/disable hl-line-mode
 (global-set-key "\C-ch" 'hl-line-mode)
