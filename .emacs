@@ -43,8 +43,11 @@
 
 ;; 80 columns
 (require 'whitespace)
-(global-whitespace-mode t)
+;; (global-whitespace-mode t)
 (setq whitespace-style '(face empty tabs lines-tail trailing))
+
+;; auto enable whitespace mode when entering C mode
+(add-hook 'c-mode-hook (lambda () (whitespace-mode)))
 
 ;; ==================== Git setup ====================
 (setq git-state-modeline-decoration 'git-state-decoration-large-dot)
