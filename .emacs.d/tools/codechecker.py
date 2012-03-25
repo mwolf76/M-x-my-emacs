@@ -175,7 +175,7 @@ class PylintRunner(LintRunner):
         #r'\s*(?P<context>[^\]]+)\]'
         r'\s*(?P<description>.*)$')
 
-    command = '/Users/markus/Documents/work/ahref/git/moka/moka/bin/pylint'
+    command = '/Users/markus/Documents/work/ahref/git/moka/ve/bin/pylint'
     sane_default_ignore_codes = set([
         "C0103"  # Naming convention
         , "W0108"  # Lambda may not be necessary
@@ -223,7 +223,7 @@ class PylintRunner(LintRunner):
 
 
 class Pep8Runner(LintRunner):
-    command = '/Users/markus/Documents/work/ahref/git/moka/moka/bin/pep8'
+    command = '/Users/markus/Documents/work/ahref/git/moka/ve/bin/pep8'
     sane_default_ignore_codes = set([
         #'RW29', 'W391', 'W291', 'WO232', #
         #'E202', # E202 whitespace before ']' or ')'
@@ -260,7 +260,7 @@ class Pep8Runner(LintRunner):
 
 
 class PyflakesRunner(LintRunner):
-    command = '/Users/markus/Documents/work/ahref/git/moka/moka/bin/pyflakes'
+    command = '/Users/markus/Documents/work/ahref/git/moka/ve/bin/pyflakes'
     output_matcher = re.compile(
         r'(?P<filename>[^:]+):'
         r'(?P<line_number>[^:]+)\s*:'
