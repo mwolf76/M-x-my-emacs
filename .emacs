@@ -1,24 +1,24 @@
 ;; ==================== Basic configuration ====================
-
 ;; add some extra path (Mac OS X workaround)
 (let ((extra-path "/opt/local/bin")
       (orig-path (getenv "PATH")))
   (setenv "PATH" (concat extra-path ":" orig-path)))
 
 ;; ===== Setup load path =====
-(add-to-list 'load-path "~/.emacs.d/plugins/")
-(add-to-list 'load-path "~/.emacs.d/plugins/git-emacs/")
-(add-to-list 'load-path "~/.emacs.d/plugins/scala-mode")
+(let ((basepath "/Users/markus/Documents/work/github/M-x-my-emacs/emacs.d/plugins/"))
+
+  (add-to-list 'load-path basepath)
+  (add-to-list 'load-path (concat basepath "git-emacs/"))
+  (add-to-list 'load-path (concat basepath "color-theme-6.6.0/")))
 
 ;; Auto elisp compilation cache upon startup
-(require 'byte-code-cache)
-(load-library "byte-code-cache")
+;; (require 'byte-code-cache)
+;; (load-library "byte-code-cache")
 
 ;; Remove useless toolbar
 (tool-bar-mode -1)
 
 ;; ===== Color theme setup =====
-(add-to-list 'load-path "~/.emacs.d/plugins/color-theme-6.6.0")
 (require 'color-theme)
 (eval-after-load "color-theme"
   '(progn
@@ -182,8 +182,7 @@
 (define-key ctl-x-map "K" 'wipe)
 
 ;; YASnippet
-(add-to-list 'load-path "~/Documents/work/3rdparty/yasnippet/")
-(require 'yasnippet-bundle)
+;; (require 'yasnippet-bundle)
 
 (windmove-default-keybindings 'ctrl)
 (require 'comint)
@@ -290,7 +289,7 @@
         (flet ((process-list ())) ad-do-it))
 
 ;; ==================== Scala development ====================
-(require 'scala-mode-auto)
+;; (require 'scala-mode-auto)
 ;; (add-hook 'scala-mode-hook
 ;;           '(lambda ()
 ;;              (yas/minor-mode-on)
@@ -406,17 +405,6 @@
 (dotfile .bashrc)
 (dotfile .bash_aliases)
 (dotfile .bash_environment)
-
-;; ==================== Aquamacs specific stuff ====================
-;; (if (featurep 'aquamacs)
-;;     (progn
-;;       (define-key dired-mode-map "o" 'dired-open-mac)
-;;       (defun dired-open-mac ()
-;;         (interactive)
-;;         (let ((file-name (dired-get-file-for-visit)))
-;;           (if (file-exists-p file-name)
-;;               (shell-command (concat "open '" file-name "'" nil )))))))
-
 
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
