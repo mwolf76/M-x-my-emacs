@@ -1,6 +1,6 @@
 ;; ==================== Basic configuration ====================
 ;; add some extra path (Mac OS X workaround)
-(let ((extra-path "/opt/local/bin")
+(let ((extra-path "/opt/local/bin:/opt/local/sbin")
       (orig-path (getenv "PATH")))
   (setenv "PATH" (concat extra-path ":" orig-path)))
 
@@ -29,11 +29,52 @@
 ;; keeps the buffer in sync with the one that is on disk
 (global-auto-revert-mode 1)
 
-;; set standard indent to 4
-(setq standard-indent 4)
+(setq-default tab-width 8) ; or any other preferred value
+(setq cua-auto-tabify-rectangles nil)
+(defadvice align (around smart-tabs activate)
+  (let ((indent-tabs-mode nil)) ad-do-it))
+(defadvice align-regexp (around smart-tabs activate)
+  (let ((indent-tabs-mode nil)) ad-do-it))
+(defadvice indent-relative (around smart-tabs activate)
+  (let ((indent-tabs-mode nil)) ad-do-it))
+(defadvice indent-according-to-mode (around smart-tabs activate)
+  (let ((indent-tabs-mode indent-tabs-mode))
+	(if (memq indent-line-function
+			  '(indent-relative
+				indent-relative-maybe))
+		(setq indent-tabs-mode nil))
+	ad-do-it))
+(defmacro smart-tabs-advice (function offset)
+  `(progn
+	 (defvaralias ',offset 'tab-width)
+	 (defadvice ,function (around smart-tabs activate)
+	   (cond
+		(indent-tabs-mode
+		 (save-excursion
+		   (beginning-of-line)
+		   (while (looking-at "\t*\\( +\\)\t+")
+			 (replace-match "" nil nil nil 1)))
+		 (setq tab-width tab-width)
+		 (let ((tab-width fill-column)
+			   (,offset fill-column)
+			   (wstart (window-start)))
+		   (unwind-protect
+			   (progn ad-do-it)
+			 (set-window-start (selected-window) wstart))))
+		(t
+		 ad-do-it)))))
+(smart-tabs-advice c-indent-line c-basic-offset)
+(smart-tabs-advice c-indent-region c-basic-offset)
+
+;; set standard indent to 8
+;; (setq standard-indent 8)
 
 ;; indent with spaces only
+;; (setq-default indent-tabs-mode nil)
+
 (setq-default indent-tabs-mode nil)
+    (add-hook 'c-mode-common-hook
+              (lambda () (setq indent-tabs-mode t)))
 
 ;;; Better buffer switching
 (iswitchb-mode 1)
