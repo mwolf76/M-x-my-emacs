@@ -1,8 +1,4 @@
 ;; ==================== Basic configuration ====================
-;; add some extra path (Mac OS X workaround)
-(let ((extra-path "/opt/local/bin:/opt/local/sbin")
-      (orig-path (getenv "PATH")))
-  (setenv "PATH" (concat extra-path ":" orig-path)))
 
 ;; ===== Setup load path =====
 (let ((basepath "/Users/markus/Documents/work/github/M-x-my-emacs/emacs.d/plugins/"))
@@ -84,7 +80,11 @@
 
 ;; 80 columns
 (require 'whitespace)
-;; (global-whitespace-mode t)
+;; display only tails of lines longer than 80 columns, tabs and
+;; trailing whitespaces
+(setq whitespace-line-column 80
+      whitespace-style '(tabs trailing lines-tail))
+
 (setq whitespace-style '(face empty tabs lines-tail trailing))
 
 ;; auto enable whitespace mode when entering C mode
@@ -97,9 +97,6 @@
 ;; ==================== Backup setup ====================
 ;; Disable backup files.
 (setq make-backup-files nil)
-
-;; ===== Backup and version control =====
-;; (setq backup-directory-alist (quote ((".*" . "~/.backups/"))))
 
 ;; Enable versioning with default values (keep five last versions, I think!)
 (setq version-control t)
