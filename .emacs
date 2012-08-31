@@ -25,54 +25,11 @@
 ;; keeps the buffer in sync with the one that is on disk
 (global-auto-revert-mode 1)
 
-(setq-default tab-width 8) ; or any other preferred value
-(setq cua-auto-tabify-rectangles nil)
-(defadvice align (around smart-tabs activate)
-  (let ((indent-tabs-mode nil)) ad-do-it))
-(defadvice align-regexp (around smart-tabs activate)
-  (let ((indent-tabs-mode nil)) ad-do-it))
-(defadvice indent-relative (around smart-tabs activate)
-  (let ((indent-tabs-mode nil)) ad-do-it))
-(defadvice indent-according-to-mode (around smart-tabs activate)
-  (let ((indent-tabs-mode indent-tabs-mode))
-	(if (memq indent-line-function
-			  '(indent-relative
-				indent-relative-maybe))
-		(setq indent-tabs-mode nil))
-	ad-do-it))
-(defmacro smart-tabs-advice (function offset)
-  `(progn
-	 (defvaralias ',offset 'tab-width)
-	 (defadvice ,function (around smart-tabs activate)
-	   (cond
-		(indent-tabs-mode
-		 (save-excursion
-		   (beginning-of-line)
-		   (while (looking-at "\t*\\( +\\)\t+")
-			 (replace-match "" nil nil nil 1)))
-		 (setq tab-width tab-width)
-		 (let ((tab-width fill-column)
-			   (,offset fill-column)
-			   (wstart (window-start)))
-		   (unwind-protect
-			   (progn ad-do-it)
-			 (set-window-start (selected-window) wstart))))
-		(t
-		 ad-do-it)))))
-(smart-tabs-advice c-indent-line c-basic-offset)
-(smart-tabs-advice c-indent-region c-basic-offset)
-
-;; set standard indent to 8
-;; (setq standard-indent 8)
-
-;; indent with spaces only
-;; (setq-default indent-tabs-mode nil)
-
+;; indentation
 (setq-default indent-tabs-mode nil)
-    (add-hook 'c-mode-common-hook
-              (lambda () (setq indent-tabs-mode t)))
+(setq-default c-basic-offset 4)
 
-;;; Better buffer switching
+;; Better buffer switching
 (iswitchb-mode 1)
 
 ;; default to better frame titles
@@ -82,13 +39,18 @@
 (require 'whitespace)
 ;; display only tails of lines longer than 80 columns, tabs and
 ;; trailing whitespaces
-(setq whitespace-line-column 80
-      whitespace-style '(tabs trailing lines-tail))
+;; (setq whitespace-line-column 80
+;;       whitespace-style '(tabs trailing lines-tail))
 
 (setq whitespace-style '(face empty tabs lines-tail trailing))
 
-;; auto enable whitespace mode when entering C mode
+;; auto enable whitespace mode when entering C/C++ mode
 (add-hook 'c-mode-hook (lambda () (whitespace-mode)))
+(add-hook 'c++-mode-hook (lambda () (whitespace-mode)))
+
+;; auto enable linum mode when entering C mode
+(add-hook 'c-mode-hook (lambda () (linum-mode)))
+(add-hook 'c++-mode-hook (lambda () (linum-mode)))
 
 ;; ==================== Git setup ====================
 (setq git-state-modeline-decoration 'git-state-decoration-large-dot)
@@ -454,3 +416,10 @@
 
 ;; workaround for linum-mode on Mac OS X
 (setq linum-format "%d ")
+(custom-set-faces
+  ;; custom-set-faces was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ )
+(put 'narrow-to-region 'disabled nil)
