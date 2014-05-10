@@ -1,15 +1,11 @@
 ;; ==================== Basic configuration ====================
+;; prevent silly initial splash screen
+(setq inhibit-splash-screen t)
 
 ;; ===== Setup load path =====
-(let ((basepath "/Users/markus/Documents/work/github/M-x-my-emacs/emacs.d/plugins/"))
+(let ((basepath "/home/markus/Code/github/M-x-my-emacs/emacs.d/"))
 
-  (add-to-list 'load-path basepath)
-  (add-to-list 'load-path (concat basepath "git-emacs/"))
-  (add-to-list 'load-path (concat basepath "color-theme-6.6.0/")))
-
-;; Auto elisp compilation cache upon startup
-;; (require 'byte-code-cache)
-;; (load-library "byte-code-cache")
+  (add-to-list 'load-path basepath))
 
 ;; Remove useless toolbar
 (tool-bar-mode -1)
@@ -39,8 +35,8 @@
 (require 'whitespace)
 ;; display only tails of lines longer than 80 columns, tabs and
 ;; trailing whitespaces
-;; (setq whitespace-line-column 80
-;;       whitespace-style '(tabs trailing lines-tail))
+(setq whitespace-line-column 80
+      whitespace-style '(tabs trailing lines-tail))
 
 (setq whitespace-style '(face empty tabs lines-tail trailing))
 
@@ -53,8 +49,8 @@
 (add-hook 'c++-mode-hook (lambda () (linum-mode)))
 
 ;; ==================== Git setup ====================
-(setq git-state-modeline-decoration 'git-state-decoration-large-dot)
-(require 'git-emacs)
+;; (setq git-state-modeline-decoration 'git-state-decoration-large-dot)
+;; (require 'git-emacs)
 
 ;; ==================== Backup setup ====================
 ;; Disable backup files.
@@ -111,9 +107,6 @@
 (global-set-key "\C-ch" 'hl-line-mode)
 (global-set-key "\C-cl" 'linum-mode)
 
-(load-library "match")
-(global-set-key "\C-c)" 'goto-match-paren)
-
 ;; igrep
 (autoload 'igrep "igrep"
   "*Run `grep` PROGRAM to match REGEX in FILES..." t)
@@ -157,29 +150,6 @@
 
 (add-hook 'before-save-hook 'unix-newline)
 (add-hook 'before-save-hook 'whitespace-cleanup)
-
-;; ===== Breadcrumb (fast bookmarks management) =====
-(require 'breadcrumb)
-(global-set-key "\M- "                  'bc-set)            ;; Meta-SPACE for set bookmark
-(global-set-key [(meta j)]              'bc-previous)       ;; M-j for jump to previous
-(global-set-key [(shift meta j)]        'bc-next)           ;; Shift-M-j for jump to next
-(global-set-key [(meta up)]             'bc-local-previous) ;; M-up-arrow for local previous
-(global-set-key [(meta down)]           'bc-local-next)     ;; M-down-arrow for local next
-(global-set-key [(control c)(j)]        'bc-goto-current)   ;; C-c j for jump to current bookmark
-(global-set-key [(control x)(meta j)]   'bc-list)           ;; C-x M-j for the bookmark menu list
-
-;; ===== Windows mode =====
-(require 'windows)
-(win:startup-with-window)
-(define-key ctl-x-map "C" 'see-you-again)
-(autoload 'save-current-configuration "revive" "Save status" t)
-(autoload 'resume "revive" "Resume Emacs" t)
-(autoload 'wipe "revive" "Wipe Emacs" t)
-
-;; And define favorite keys to those functions.  Here is a sample.
-(define-key ctl-x-map "S" 'save-current-configuration)
-(define-key ctl-x-map "F" 'resume)
-(define-key ctl-x-map "K" 'wipe)
 
 ;; YASnippet
 ;; (require 'yasnippet-bundle)
